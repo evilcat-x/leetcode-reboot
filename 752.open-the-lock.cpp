@@ -80,7 +80,7 @@
  */
 #include <vector>
 #include <string>
-#include <set>
+#include <map>
 #include <queue>
 using namespace std;
 
@@ -89,37 +89,40 @@ class Solution
   public:
     int openLock(vector<string> &deadends, string target)
     {
-        set<string> v;
-        queue<string> q;
+        int v[10000] = {0};
+        queue<int> q;
         int distance = 0;
-        string start = "0000";
+        int start = 0;
+        int end = stoi(target);
         for (auto &s : deadends)
-            v.insert(s);
-        if (v.find(start) == v.end())
+            v[stoi(s)] = -1;
+        if (v[start] == 0)
             q.push(start);
         while (!q.empty())
         {
             for (int i = 0, e = q.size(); i < e; i++)
             {
-                string node = q.front();
+                int node = q.front();
                 q.pop();
-                if (node == target)
+                if (node == end)
                     return distance;
+                int dec = 1000;
                 for (int j = 0; j < 4; j++)
                 {
-                    string tmp = node;
-                    tmp[j] = node[j] == '9' ? '0' : node[j] + 1;
-                    if (v.find(tmp) == v.end())
+                    int tmp;
+                    tmp = (node / dec) % 10 == 9 ? node - 9 * dec : node + 1 * dec;
+                    if (v[tmp] == 0)
                     {
-                        v.insert(tmp);
+                        v[tmp] = 1;
                         q.push(tmp);
                     }
-                    tmp[j] = node[j] == '0' ? '9' : node[j] - 1;
-                    if (v.find(tmp) == v.end())
+                    tmp = (node / dec) % 10 == 0 ? node + 9 * dec : node - 1 * dec;
+                    if (v[tmp] == 0)
                     {
-                        v.insert(tmp);
+                        v[tmp] = 1;
                         q.push(tmp);
                     }
+                    dec /= 10;
                 }
             }
             distance++;
