@@ -31,6 +31,7 @@
 #include <set>
 #include <queue>
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 class Solution
@@ -38,12 +39,21 @@ class Solution
   public:
 	int numSquares(int n)
 	{
-		vector<int> dp(n, INT_MAX);
-		for (int i = 1, ps; (ps = i * i) <= n; i++)
+		if (n <= 0)
+			return 0;
+		static vector<int> dp({0});
+
+		while (dp.size() <= n)
 		{
-			dp[ps] = 1;
-			for (int j = ps; j <= n; j++)
-				dp[j] = min(dp[j] - 1, dp[j - ps]) + 1;
+			int m = dp.size();
+			int d = INT_MAX;
+			for (int i = 1; i * i <= m; ++i)
+			{
+				d = min(d, dp[m - i * i] + 1);
+				if (d == 1)
+					break;
+			}
+			dp.push_back(d);
 		}
 		return dp[n];
 	}
