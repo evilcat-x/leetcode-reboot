@@ -58,27 +58,22 @@ public:
 
     void push(int x) {
         if(s.empty()) {
-            s.push(x);
 			minVal = x;
-        } else if (x > minVal) {
-			s.push(x);
-        } else {
+        } else if (x <= minVal) {
 			s.push(minVal);
-			s.push(x);
 			minVal = x;
 		}
+		s.push(x);
     }
 
     void pop() {
-        if (s.top() != minVal) {
-			s.pop();
-		} else {
+        if (s.top() == minVal) {
 			s.pop();
 			if (s.empty())
 				return;
 			minVal = s.top();
-			s.pop();
 		}
+		s.pop();
     }
 
     int top() {
