@@ -37,7 +37,6 @@
  *
  */
 #include <string>
-#include <queue>
 using namespace std;
 
 class Solution
@@ -45,52 +44,29 @@ class Solution
   public:
     string decodeString(string s)
     {
-        if (s.find('[') == string::npos)
-            return s;
-        queue<int> repeat;
-        queue<string> output;
         int i = 0;
+        return decodeString(s, i);
+    }
+    string decodeString(string &s, int &i)
+    {
+        string res = "";
         int len = s.length();
-        while (i < len)
+        while (i < len && s[i] != ']')
         {
-            int r = 0;
-            while ('0' <= s[i] && s[i] <= '9')
-                r = r * 10 + (s[i++] - '0');
-            if (r != 0)
-                repeat.push(r);
-            if (s[i] == '[')
+            if (isdigit(s[i]))
             {
-                int count = 1;
-                int mi = i + 1;
-                while (mi < len && count > 0)
-                {
-                    count += s[mi] == '[';
-                    count -= s[mi] == ']';
-                    mi++;
-                }
-                output.push(decodeString(s.substr(i + 1, mi - i - 2)));
-                i = mi;
+                int repeat = 0;
+                while (i < len && isdigit(s[i]))
+                    repeat = repeat * 10 + s[i++] - '0';
+                i++;
+                string decode = decodeString(s, i);
+                i++;
+                while (repeat-- > 0)
+                    res += decode;
             }
             else
-            {
-                repeat.push(1);
-                int mi = i;
-                while (mi < len && !('0' <= s[mi] && s[mi] <= '9'))
-                    mi++;
-                output.push(s.substr(i, mi - i));
-                i = mi;
-            }
+                res += s[i++];
         }
-        string result = "";
-        while (!repeat.empty())
-        {
-            string cur = output.front();
-            output.pop();
-            int e = repeat.front();
-            repeat.pop();
-            for (int j = 0; j < e; j++)
-                result += cur;
-        }
-        return result;
+        return res;
     }
 };
