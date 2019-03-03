@@ -50,25 +50,24 @@ class Solution
     vector<int> inorderTraversal(TreeNode *root)
     {
         vector<int> result;
-        set<TreeNode *> v;
         stack<TreeNode *> s;
         if (root)
             s.push(root);
         while (!s.empty())
         {
-            TreeNode *cur = s.top();
-            s.pop();
-            if (v.find(cur) == v.end())
+            while (s.top()->left)
+                s.push(s.top()->left);
+            while (!s.empty())
             {
-                if (cur->right)
-                    s.push(cur->right);
-                s.push(cur);
-                if (cur->left)
-                    s.push(cur->left);
-                v.insert(cur);
-            }
-            else
+                TreeNode *cur = s.top();
                 result.push_back(cur->val);
+                s.pop();
+                if (cur->right)
+                {
+                    s.push(cur->right);
+                    break;
+                }
+            }
         }
         return result;
     }
