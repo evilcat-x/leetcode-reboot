@@ -52,41 +52,34 @@ class Solution
   public:
     TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder)
     {
-        if (inorder.size() == 0)
+        if (inorder.empty())
             return nullptr;
         stack<TreeNode *> st;
-        stack<pair<int, int>> sin;
-        stack<pair<int, int>> sout;
-        TreeNode *root = new TreeNode(0);
+        auto in = inorder.end() - 1;
+        auto post = postorder.end() - 1;
+        auto start = postorder.begin();
+        TreeNode *root = new TreeNode(*post--);
+        TreeNode *cur = root;
         st.push(root);
-        sin.push(pair(0, inorder.size() - 1));
-        sout.push(pair(0, postorder.size() - 1));
         while (!st.empty())
         {
-            TreeNode *cur = st.top();
-            st.pop();
-            auto in = sin.top();
-            sin.pop();
-            auto out = sout.top();
-            sout.pop();
-            cur->val = postorder[out.second];
-            int index = find(inorder.begin() + in.first, inorder.begin() + in.second, cur->val) - inorder.begin();
-            if (in.first == in.second)
-                continue;
-
-            if (index < in.second)
+            while (st.top()->val != *in)
             {
-                cur->right = new TreeNode(0);
-                st.push(cur->right);
-                sin.push(pair(index + 1, in.second));
-                sout.push(pair(out.first + (index - in.first - 1) + 1, out.second - 1));
+                cur->right = new TreeNode(*post--);
+                cur = cur->right;
+                st.push(cur);
             }
-            if (index > in.first)
+            while (!st.empty() && st.top()->val == *in)
             {
-                cur->left = new TreeNode(0);
-                st.push(cur->left);
-                sin.push(pair(in.first, index - 1));
-                sout.push(pair(out.first, out.first + (index - in.first - 1)));
+                cur = st.top();
+                st.pop();
+                in--;
+            }
+            if (post >= start)
+            {
+                cur->left = new TreeNode(*post--);
+                cur = cur->left;
+                st.push(cur);
             }
         }
         return root;
