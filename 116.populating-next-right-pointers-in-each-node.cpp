@@ -88,22 +88,21 @@ class Solution
   public:
     Node *connect(Node *root)
     {
-        queue<Node *> q;
-        if (root)
-            q.push(root);
-        while (!q.empty())
+        if (!root)
+            return root;
+        Node *prev = root;
+        Node *front = root;
+        while (front->left)
         {
-            int size = q.size();
-            while (size--)
+            front = front->left;
+            while (prev)
             {
-                Node *c = q.front();
-                q.pop();
-                c->next = size ? q.front() : nullptr;
-                if (c->left)
-                    q.push(c->left);
-                if (c->right)
-                    q.push(c->right);
+                prev->left->next = prev->right;
+                if (prev->next)
+                    prev->right->next = prev->next->left;
+                prev = prev->next;
             }
+            prev = front;
         }
         return root;
     }
