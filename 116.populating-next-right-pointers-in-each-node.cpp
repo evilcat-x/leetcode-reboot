@@ -91,28 +91,19 @@ class Solution
         queue<Node *> q;
         if (root)
             q.push(root);
-        int size;
-        Node *prev;
-        Node *cur;
         while (!q.empty())
         {
-            size = q.size();
-            prev = nullptr;
-            cur = nullptr;
-            for (int i = 0; i < size; i++)
+            int size = q.size();
+            while (size--)
             {
-                cur = q.front();
+                Node *c = q.front();
                 q.pop();
-                if (prev)
-                    prev->next = cur;
-                prev = cur;
-                if (cur->left)
-                    q.push(cur->left);
-                if (cur->right)
-                    q.push(cur->right);
+                c->next = size ? q.front() : nullptr;
+                if (c->left)
+                    q.push(c->left);
+                if (c->right)
+                    q.push(c->right);
             }
-            if (prev)
-                prev->next = nullptr;
         }
         return root;
     }
